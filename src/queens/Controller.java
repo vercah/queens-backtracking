@@ -18,32 +18,40 @@ public class Controller {
         this.closeButton = closeButton;
 
         board = new int[8][8];
-        currentRow = 0;
+        //currentRow = 0;
 
-        nextButton.setOnAction(this::handleNextButtonAction);
-        closeButton.setOnAction(this::handleCloseButtonAction);
+        //nextButton.setOnAction(this::handleNextButtonAction);
+        //closeButton.setOnAction(this::handleCloseButtonAction);
     }
 
     public void handleNextButtonAction(ActionEvent event) {
-        if (currentRow >= 8) {
-            return; // Already found a solution
-        }
-
-        for (int col = 0; col < 8; col++) {
-            if (isSafe(currentRow, col)) {
-                board[currentRow][col] = 1;
-                Circle circle = new Circle(20);
-                chessboard.add(circle, col, currentRow);
-            }
-        }
-
-        currentRow++;
+        //TODO: předělat
+//        if (currentRow >= 8) {
+//            return; // Already found a solution
+//        }
+//
+//        for (int col = 0; col < 8; col++) {
+//            if (isSafe(currentRow, col)) {
+//                board[currentRow][col] = 1;
+//                Circle circle = new Circle(20);
+//                chessboard.add(circle, col, currentRow);
+//            }
+//        }
+//
+//        currentRow++;
     }
 
     private boolean isSafe(int row, int col) {
-        // Check row and column
+        // Check column
         for (int i = 0; i < row; i++) {
             if (board[i][col] == 1) {
+                return false;
+            }
+        }
+
+        // Check row
+        for (int i = 0; i < col; i++) {
+            if (board[row][i] == 1) {
                 return false;
             }
         }
@@ -55,8 +63,27 @@ public class Controller {
             }
         }
 
+        // Check lower-right diagonal
+        for (int i = row, j = col; i < 8 && j < 8; i++, j++) {
+            if (board[i][j] == 1) {
+                return false;
+            }
+        }
+
         // Check upper-right diagonal
         for (int i = row, j = col; i >= 0 && j < 8; i--, j++) {
             if (board[i][j] == 1) {
                 return false;
             }
+        }
+
+        // Check upper-right diagonal
+        for (int i = row, j = col; i < 8 && j >= 0; i++, j--) {
+            if (board[i][j] == 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
