@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
@@ -23,13 +24,15 @@ public class Main extends Application {
         GridPane chessboard = createChessboard(8, 8);
         root.setCenter(chessboard);
 
+        // init scene
+        Scene scene = new Scene(root, 400, 450);
+        Controller controller = new Controller(primaryStage, chessboard);
+
         // buttonbox to be centered
-        HBox buttonBox = createButtonBox();
+        HBox buttonBox = createButtonBox(controller);
         root.setBottom(buttonBox);
         BorderPane.setAlignment(buttonBox, Pos.CENTER);
 
-        // init scene
-        Scene scene = new Scene(root, 400, 450);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -51,14 +54,18 @@ public class Main extends Application {
         return chessboard;
     }
 
-    private HBox createButtonBox() {
+    private HBox createButtonBox(Controller controller) {
         Button nextButton = new Button("Next");
         Button closeButton = new Button("Close");
-        closeButton.setOnAction(event -> Platform.exit()); // lambda expression in an event handler
 
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.getChildren().addAll(nextButton, closeButton);
+
+        // connect with the Controller
+        closeButton.setOnAction(controller::handleCloseButtonAction);
+        nextButton.setOnAction(controller::handleNextButtonAction);
+        controller.setButtons(nextButton, closeButton);
 
         return buttonBox;
     }
