@@ -9,7 +9,9 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.sql.*;
 
 
 public class Controller {
@@ -21,6 +23,7 @@ public class Controller {
     private Button closeButton;
     private List<StackPane> stackPanes; // track the stackpanes that are added
 
+    private DatabaseManager databaseManager; // connection to the database
 
     // constructor
     public Controller(Stage primaryStage, GridPane chessboard) {
@@ -31,6 +34,7 @@ public class Controller {
         for (int i = 0; i < 8; i++){
             distribution[i] = -1; // equivalent to empty
         }
+        this.databaseManager = new DatabaseManager();
     }
 
     public void setButtons(Button nextButton, Button closeButton) {
@@ -46,6 +50,9 @@ public class Controller {
         findFirstSolution();
         removeCircles();
         drawPositions(distribution, chessboard);
+        String solution = Arrays.toString(distribution); // convert to a string
+        databaseManager.insertSolution(solution); // send the solution to the database
+
     }
 
     private void findFirstSolution(){
@@ -140,7 +147,6 @@ public class Controller {
                 return false;
             }
         }
-
         return true;
     }
 }
