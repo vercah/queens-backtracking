@@ -13,9 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.sql.*;
 
-
 public class Controller {
-
+    private final int SIZE;
     private Stage primaryStage;
     private GridPane chessboard;
     private int[] distribution; // stores the solution in individual rows
@@ -26,12 +25,13 @@ public class Controller {
     private DatabaseManager databaseManager; // connection to the database
 
     // constructor
-    public Controller(Stage primaryStage, GridPane chessboard) {
+    public Controller(Stage primaryStage, GridPane chessboard, int SIZE) {
         this.primaryStage = primaryStage;
         this.chessboard = chessboard;
+        this.SIZE = SIZE;
         stackPanes = new ArrayList<>();
-        this.distribution = new int[8];
-        for (int i = 0; i < 8; i++){
+        this.distribution = new int[SIZE];
+        for (int i = 0; i < SIZE; i++){
             distribution[i] = -1; // equivalent to empty
         }
         this.databaseManager = new DatabaseManager();
@@ -57,26 +57,26 @@ public class Controller {
 
     private void findFirstSolution(){
         int occupied; // number of correctly placed queens
-        if (distribution[7] == -1){ // first time
+        if (distribution[SIZE-1] == -1){ // first time
             occupied = 1;
             distribution[0] = 0;
-        }else if (distribution[0] == 7){ // already found all -> starting again
+        }else if (distribution[0] == SIZE-1){ // already found all -> starting again
             occupied = 1;
-            for (int i = 0; i < 8; i++){
+            for (int i = 0; i < SIZE; i++){
                 distribution[i] = -1; // equivalent to empty
             }
             distribution[0] = 0;
         }else{ // finding another solution
-            occupied = 7;
+            occupied = SIZE-1;
         }
 
-        while (occupied < 8 && occupied >= 0){
+        while (occupied < SIZE && occupied >= 0){
             int column = distribution[occupied]+1;
             distribution[occupied] = -1; // making the current empty
-            while (column < 8 && !(isSafe(occupied, column))){
+            while (column < SIZE && !(isSafe(occupied, column))){
                 column++;
             }
-            if (column == 8){ // no convenient position, getting back by one
+            if (column == SIZE){ // no convenient position, getting back by one
                 distribution[occupied] = -1; // make it empty
                 occupied--;
             }else{ // found solution, keep the position in distribution and move forward
@@ -87,7 +87,7 @@ public class Controller {
     }
 
     private void drawPositions(int [] distribution, GridPane chessboard){
-        for (int row = 0; row < 8; row++) {
+        for (int row = 0; row < SIZE; row++) {
             StackPane stackPane = new StackPane(); // container
             stackPane.setAlignment(Pos.CENTER); // center the child circle
             stackPanes.add(stackPane); // add stack pane to the list
@@ -107,14 +107,14 @@ public class Controller {
 
     private boolean isSafe(int row, int col) {
         // Check column
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < SIZE; i++) {
             if (distribution[i] == col) {
                 return false;
             }
         }
 
         // Check row
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < SIZE; i++) {
             if (distribution[row] == i) {
                 return false;
             }
@@ -128,21 +128,21 @@ public class Controller {
         }
 
         // Check lower-right diagonal
-        for (int i = row, j = col; i < 8 && j < 8; i++, j++) {
+        for (int i = row, j = col; i < SIZE && j < SIZE; i++, j++) {
             if (distribution[i] == j) {
                 return false;
             }
         }
 
         // Check upper-right diagonal
-        for (int i = row, j = col; i >= 0 && j < 8; i--, j++) {
+        for (int i = row, j = col; i >= 0 && j < SIZE; i--, j++) {
             if (distribution[i] == j) {
                 return false;
             }
         }
 
         // Check upper-right diagonal
-        for (int i = row, j = col; i < 8 && j >= 0; i++, j--) {
+        for (int i = row, j = col; i < SIZE && j >= 0; i++, j--) {
             if (distribution[i] == j) {
                 return false;
             }

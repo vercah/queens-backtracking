@@ -15,18 +15,22 @@ import javafx.geometry.Pos;
 
 
 public class Main extends Application {
+    private final int SIZE = 12;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new BorderPane();
         primaryStage.setTitle("Eight Queens Problem");
 
         // init chessboard
-        GridPane chessboard = createChessboard(8, 8);
+        GridPane chessboard = createChessboard(SIZE, SIZE);
         root.setCenter(chessboard);
 
         // init scene
-        Scene scene = new Scene(root, 400, 450);
-        Controller controller = new Controller(primaryStage, chessboard);
+        int width = 50*SIZE;
+        int height = 50*(SIZE+1);
+        Scene scene = new Scene(root, width, height);
+        Controller controller = new Controller(primaryStage, chessboard, SIZE);
 
         // buttonbox to be centered
         HBox buttonBox = createButtonBox(controller);
